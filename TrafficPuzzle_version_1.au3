@@ -429,26 +429,26 @@ Local $simulatorList = WinList("NoxPlayer")
 	  EndFunc
     Func GetRewards()
 	;congratulations
-;~ 	$mau = 0
-;~ 	For $i = 0 To 2
-;~ 	  $mau = PixelGetColor(780, 250)
-;~ 	  If $mau == 14632533 Then
-;~ 		 MouseClick('left', 775, 685)
-;~ 		 Sleep(7000)
-;~ 		 MouseClick('left', 785, 860)
-;~ 		 ExitLoop
-;~ 	  EndIf
-;~ 	  Sleep(5000)
-;~ 	Next
 	$mau = 0
-	While $mau <> 14632533
-		$mau = PixelGetColor(780, 250)
-		If $mau == 14632533 Then
-			MouseClick('left', 775, 685)
-			Sleep(7000)
-			MouseClick('left', 785, 860)
-		EndIf
-	WEnd
+	For $i = 0 To 2
+	  $mau = PixelGetColor(780, 250)
+	  If $mau == 14632533 Then
+		 MouseClick('left', 775, 685)
+		 Sleep(7000)
+		 MouseClick('left', 785, 860)
+		 ExitLoop
+	  EndIf
+	  Sleep(5000)
+	Next
+;~ 	$mau = 0
+;~ 	While $mau <> 14632533
+;~ 		$mau = PixelGetColor(780, 250)
+;~ 		If $mau == 14632533 Then
+;~ 			MouseClick('left', 775, 685)
+;~ 			Sleep(7000)
+;~ 			MouseClick('left', 785, 860)
+;~ 		EndIf
+;~ 	WEnd
 EndFunc
 
 #EndRegion
