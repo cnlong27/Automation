@@ -202,6 +202,19 @@ Local $simulatorList = WinList("NoxPlayer")
 			Sleep(1000)
 			Send("{ENTER}")
 		EndIf
+		;keep phone
+		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\keep.bmp", 0, 0, -1, -1, 90, 1000)
+		If $Result[0][0] <> 0 Then
+			Sleep(1000)
+			MouseClick('left', @DesktopWidth / 2, @DesktopHeight / 2)
+			Sleep(1000)
+			MouseWheel('down', 70)
+			Sleep(1000)
+			Send("{TAB}")
+			Sleep(1000)
+			Send("{ENTER}")
+		EndIf
+
 
 		;wellcome
 		Sleep(5000)
@@ -248,19 +261,33 @@ Local $simulatorList = WinList("NoxPlayer")
 		Sleep(15000)
 		MouseMove(@DesktopWidth / 2, 250)
 
-		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon.bmp", 0, 0, -1, -1, 90, 1000)
+		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon.bmp", 0, 0, -1, -1, 150, 1000)
 		If Not @error Then
 			MouseMove($Result[1][0], $Result[1][1])
 			Sleep(300)
 			MouseClick('left', $Result[1][0], $Result[1][1])
 		Else
+		  $Result2 = _HandleImgSearch($Handle, @ScriptDir & "\Images\test.bmp", 0, 0, -1, -1, 120, 1000)
+		  If Not @error Then
+			MouseMove($Result2[1][0], $Result2[1][1])
+			Sleep(300)
+			MouseClick('left', $Result2[1][0], $Result2[1][1])
+		  EndIf
+		  Sleep(2000)
+
 		  MouseWheel('down', 80)
 		  Sleep(2000)
 		  ;into game
 		  $temp = True
 		  While $temp = True
-			 $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\intogame.bmp", 0, 0, -1, -1, 90, 1000)
+			 $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\intogame.bmp", 0, 0, -1, -1, 120, 1000)
 			 If $Result[0][0] == 0 Then
+				$Result3 = _HandleImgSearch($Handle, @ScriptDir & "\Images\test.bmp", 0, 0, -1, -1, 120, 1000)
+				If Not @error Then
+					MouseMove($Result3[1][0], $Result3[1][1])
+					Sleep(300)
+					MouseClick('left', $Result3[1][0], $Result3[1][1])
+				  EndIf
 				Sleep(3000)
 				MouseWheel('down', 60)
 
@@ -456,7 +483,7 @@ EndFunc
 #Region run function
 	Func switchInstall()
 
-		$oExcel = _ExcelBookOpen(@ScriptDir & '\gmail.xlsx')
+		$oExcel = _ExcelBookOpen(@ScriptDir & '\gmail.xls')
 		Sleep(1000)
 		For $i = 1 To UBound($simulatorList) - 1
 			WinActivate($simulatorList[$i][1]) ; Activate a window
@@ -464,9 +491,9 @@ EndFunc
 			$email = _ExcelReadCell($oExcel, 'A' & $i)
 	;~ 		MsgBox(0,0,$email)
 			Sleep(500)
-			$pass = _ExcelReadCell($oExcel, 'C' & $i)
+			$pass = _ExcelReadCell($oExcel, 'B' & $i)
 			Sleep(500)
-			$mail = _ExcelReadCell($oExcel, 'B' & $i)
+			$mail = _ExcelReadCell($oExcel, 'C' & $i)
 	;~ 		MsgBox(0,0,$pass)
 			_installGame($email, $pass,$mail)
 			Sleep(2000) ; Wait 2 seconds
@@ -511,7 +538,7 @@ EndFunc
 		For $a = 1 To 4
 			For $i = 1 To UBound($simulatorList) - 1
 				WinActivate($simulatorList[$i][1]) ; Activate a window
-				playLevel1234()
+				playLevel234()
 				Sleep(2000) ; Wait 2 seconds
 			Next
 		Next
@@ -547,7 +574,7 @@ EndFunc
 			   playLevel2()
 			   playLevel3()
 			   playLevel4()
-			ElseIf
+			Else
 			   playLevel2()
 			   playLevel3()
 			   playLevel4()
