@@ -546,7 +546,8 @@ Local $simulatorList = WinList("NoxPlayer")
 			If $hasData == False Then
 				_creatIdGame()
 			EndIf
-			Sleep(2000) ; Wait 2 seconds
+			Sleep(5000) ; Wait 5 seconds
+			switchLoopLevel2to4()
 		Next
 	EndFunc   ;
 
@@ -612,7 +613,6 @@ Local $simulatorList = WinList("NoxPlayer")
 	  switchInstall()
 	  switchPlayLevel1()
 	  switchFindDataOrCreateID()
-	  switchLoopLevel2to4()
 	  switchLoop60min()
 	  _closeNox()
 	EndFunc   ;==>Automation
