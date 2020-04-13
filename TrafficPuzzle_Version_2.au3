@@ -101,7 +101,7 @@ Local $simulatorList = WinList("NoxPlayer")
 		Send('traffic puzzle')
 		Sleep(2000)
 		Send("{ENTER}")
-		Sleep(15000)
+		Sleep(10000)
 
 		;select game
 	   $time = 1
@@ -194,6 +194,19 @@ Local $simulatorList = WinList("NoxPlayer")
 			Sleep(1000)
 			Send("{ENTER}")
 		EndIf
+		;keep phone
+		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\keep.bmp", 0, 0, -1, -1, 90, 1000)
+		If $Result[0][0] <> 0 Then
+			Sleep(1000)
+			MouseClick('left', @DesktopWidth / 2, @DesktopHeight / 2)
+			Sleep(1000)
+			MouseWheel('down', 70)
+			Sleep(1000)
+			Send("{TAB}")
+			Sleep(1000)
+			Send("{ENTER}")
+		EndIf
+
 
 		;wellcome
 		Sleep(5000)
@@ -237,22 +250,36 @@ Local $simulatorList = WinList("NoxPlayer")
 		Send('traffic puzzle')
 		Sleep(1500)
 		Send("{ENTER}")
-		Sleep(5000)
+		Sleep(15000)
 		MouseMove(@DesktopWidth / 2, 250)
 
-		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon.bmp", 0, 0, -1, -1, 90, 1000)
+		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon.bmp", 0, 0, -1, -1, 150, 1000)
 		If Not @error Then
 			MouseMove($Result[1][0], $Result[1][1])
 			Sleep(300)
 			MouseClick('left', $Result[1][0], $Result[1][1])
 		Else
+		  $Result2 = _HandleImgSearch($Handle, @ScriptDir & "\Images\test.bmp", 0, 0, -1, -1, 120, 1000)
+		  If Not @error Then
+			MouseMove($Result2[1][0], $Result2[1][1])
+			Sleep(300)
+			MouseClick('left', $Result2[1][0], $Result2[1][1])
+		  EndIf
+		  Sleep(2000)
+
 		  MouseWheel('down', 80)
 		  Sleep(2000)
 		  ;into game
 		  $temp = True
 		  While $temp = True
-			 $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\intogame.bmp", 0, 0, -1, -1, 90, 1000)
+			 $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\intogame.bmp", 0, 0, -1, -1, 120, 1000)
 			 If $Result[0][0] == 0 Then
+				$Result3 = _HandleImgSearch($Handle, @ScriptDir & "\Images\test.bmp", 0, 0, -1, -1, 120, 1000)
+				If Not @error Then
+					MouseMove($Result3[1][0], $Result3[1][1])
+					Sleep(300)
+					MouseClick('left', $Result3[1][0], $Result3[1][1])
+				  EndIf
 				Sleep(3000)
 				MouseWheel('down', 60)
 
@@ -400,9 +427,12 @@ Local $simulatorList = WinList("NoxPlayer")
    ;~ MsgBox(0,0,0)
    EndFunc   ;==>_closeNox
 	Func _closeNoxTimesOne()
+	   Run('C:\Program Files (x86)\Nox\bin\MultiPlayerManager.exe')
+	   WinWait('Nox multi-instance manager','',10)
+	   Sleep(2000)
 	   WinActivate('Nox multi-instance manager')
 	   Sleep(2000)
-	   $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\closeNox.bmp", 0, 0, -1, -1, 120, 1000)
+	   $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\closeNox.bmp", 0, 0, -1, -1, 90, 1000)
 	   If Not @error Then
 			 For $i = 1 To $Result[0][0]
 				 MouseClick('left', $Result[1][0] + 5, $Result[1][1] + 5)
@@ -415,7 +445,30 @@ Local $simulatorList = WinList("NoxPlayer")
 		 Else
 			 ConsoleWrite("Error Search closeNox.bmp" & @CRLF)
 		 EndIf
-	EndFunc
+	  EndFunc
+    Func GetRewards()
+	;congratulations
+	$mau = 0
+	For $i = 0 To 2
+	  $mau = PixelGetColor(780, 250)
+	  If $mau == 14632533 Then
+		 MouseClick('left', 775, 685)
+		 Sleep(7000)
+		 MouseClick('left', 785, 860)
+		 ExitLoop
+	  EndIf
+	  Sleep(5000)
+	Next
+;~ 	$mau = 0
+;~ 	While $mau <> 14632533
+;~ 		$mau = PixelGetColor(780, 250)
+;~ 		If $mau == 14632533 Then
+;~ 			MouseClick('left', 775, 685)
+;~ 			Sleep(7000)
+;~ 			MouseClick('left', 785, 860)
+;~ 		EndIf
+;~ 	WEnd
+EndFunc
 
 #EndRegion
 
