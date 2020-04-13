@@ -1,3 +1,6 @@
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_UseUpx=y
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <Array.au3>
 #include "HandleImgSearch.au3"
 #include <ExcelCOM_UDF.au3>
@@ -258,6 +261,7 @@ Local $simulatorList = WinList("NoxPlayer")
 		Sleep(15000)
 		MouseMove(@DesktopWidth / 2, 250)
 
+
 		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon.bmp", 0, 0, -1, -1, 150, 1000)
 		If Not @error Then
 			MouseMove($Result[1][0], $Result[1][1])
@@ -269,40 +273,26 @@ Local $simulatorList = WinList("NoxPlayer")
 			MouseMove($Result2[1][0], $Result2[1][1])
 			Sleep(300)
 			MouseClick('left', $Result2[1][0], $Result2[1][1])
-		  EndIf
-		  Sleep(2000)
-
-		  MouseWheel('down', 80)
-		  Sleep(2000)
-		  ;into game
-		  $temp = True
-		  While $temp = True
-			 $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\intogame.bmp", 0, 0, -1, -1, 120, 1000)
-			 If $Result[0][0] == 0 Then
-				$Result3 = _HandleImgSearch($Handle, @ScriptDir & "\Images\test.bmp", 0, 0, -1, -1, 120, 1000)
-				If Not @error Then
-					MouseMove($Result3[1][0], $Result3[1][1])
-					Sleep(300)
-					MouseClick('left', $Result3[1][0], $Result3[1][1])
-				  EndIf
-				Sleep(3000)
-				MouseWheel('down', 60)
-
-			 Else
-				MouseMove($Result[1][0], $Result[1][1])
+		  Else
+			$Result3 = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon1.bmp", 0, 0, -1, -1, 150, 1000)
+			If Not @error Then
+				MouseMove($Result3[1][0], $Result3[1][1])
 				Sleep(300)
-				MouseClick('left', $Result[1][0], $Result[1][1])
-				Sleep(1000)
-				$temp = False
-			 EndIf
-		  WEnd
+				MouseClick('left', $Result3[1][0], $Result3[1][1])
+			Else
+				MouseWheel('down', 80)
+				Sleep(2000)
+				$Result4 = _HandleImgSearch($Handle, @ScriptDir & "\Images\intogame.bmp", 0, 0, -1, -1, 120, 1000)
+				If $Result4[0][0] <> 0 Then
+					MouseMove($Result4[1][0], $Result4[1][1])
+					Sleep(300)
+					MouseClick('left', $Result4[1][0], $Result4[1][1])
+					Sleep(1000)
+				EndIf
+			EndIf
+		  EndIf
 		EndIf
-
-
-
 		Sleep(10000)
-
-
 		;install game
 		_clickImage('install3', 90)
 		Sleep(5000)
@@ -316,6 +306,7 @@ Local $simulatorList = WinList("NoxPlayer")
 		_clickImageWhile('open', 90)
 
 	EndFunc   ;==>_installGame
+
 	Func _creatIdGame()
 		;create Id game
 		_clickImage('createId', 120)
@@ -608,30 +599,6 @@ Automation()
 ;~ Else
 ;~ 	ConsoleWrite("_HandleImgSearch: Fail" & @CRLF)
 ;~ EndIf
-
-Func GetRewards()
-	;congratulations
-	$mau = 0
-	For $i = 0 To 2
-	  $mau = PixelGetColor(780, 250)
-	  If $mau == 14632533 Then
-		 MouseClick('left', 775, 685)
-		 Sleep(7000)
-		 MouseClick('left', 785, 860)
-		 ExitLoop
-	  EndIf
-	  Sleep(5000)
-	Next
-
-;	While $mau <> 14632533
-;		$mau = PixelGetColor(780, 250)
-;		If $mau == 14632533 Then
-;			MouseClick('left', 775, 685)
-;			Sleep(7000)
-;			MouseClick('left', 785, 860)
-;		EndIf
-;	WEnd
-EndFunc
 
 Func playLevel1()
 	_findPanelLuckyDay()
