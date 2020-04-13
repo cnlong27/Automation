@@ -21,7 +21,14 @@ Func TogglePause()
 		ToolTip('Script is "Paused"', 0, 0)
 	WEnd
 	ToolTip("")
- EndFunc   ;==>TogglePause
+EndFunc   ;==>TogglePause
+HotKeySet("{F2}", "_openGame")
+Func _openGame()
+	_closeNox()
+	Sleep(10000)
+	Automation()
+EndFunc
+
 
 Local $posLevel1[6][2] = [[985, 620], [985, 620], [985, 620], [985, 620], [820, 395], [985, 620]]
 Local $posLevel2[3][2] = [[990, 565], [990, 620], [990, 620]]
@@ -607,9 +614,9 @@ Local $simulatorList = WinList("NoxPlayer")
 	  $CountNox = _readGmail()
 	  _createNox($CountNox)
 	  _OpenNox()
-	  Sleep(5000)
+	  Sleep(10000)
 	  $simulatorList = WinList("NoxPlayer")
-	  Sleep(5000)
+	  Sleep(10000)
 	  switchInstall()
 	  switchPlayLevel1()
 	  switchFindDataOrCreateID()

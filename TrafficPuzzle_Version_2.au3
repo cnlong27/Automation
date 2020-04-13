@@ -12,7 +12,12 @@ Func TogglePause()
 	WEnd
 	ToolTip("")
 EndFunc   ;==>TogglePause
-
+HotKeySet("{F2}", "_openGame")
+Func _openGame()
+	_closeNox()
+	Sleep(10000)
+	Automation()
+EndFunc
 
 
 $Handle = ""
