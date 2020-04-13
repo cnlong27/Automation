@@ -469,7 +469,21 @@ Local $simulatorList = WinList("NoxPlayer")
 ;~ 		EndIf
 ;~ 	WEnd
 EndFunc
-
+	Func _readGmail()
+	$temp = 0
+	$oExcel = _ExcelBookOpen(@ScriptDir & '\gmail.xls',0)
+	Sleep(1000)
+	For $i = 1 to 100
+		$email = _ExcelReadCell($oExcel, 'A' & $i)
+		if $email <> '' Then
+			$temp += 1
+		Else
+			ExitLoop
+		EndIf
+	Next
+	_ExcelBookClose($oExcel)
+	Return $temp
+	EndFunc
 #EndRegion
 
 #Region run function
@@ -547,23 +561,32 @@ EndFunc
 	EndFunc   ;==>switchLoop60min
 
 	Func Automation()
+		_closeNoxTimesOne()
+		$CountNox = _readGmail()
+		_createNox($CountNox)
+		_OpenNox()
+		Sleep(10000)
+		$simulatorList = WinList("NoxPlayer")
+		Sleep(10000)
 		switchInstall()
 		switchClickStart()
-	;	switchFindDataOrCreateID()
 		switchLoopLevel()
 		switchLoop60min()
+		_closeNox()
 	EndFunc   ;==>Automation
 
 #EndRegion
 
 #Region open and run Game
 ;~ _closeNoxTimesOne()
-_createNox(2)
-_OpenNox()
-Sleep(10000)
-Local $simulatorList = WinList("NoxPlayer")
- switchInstall()
-_closeNox()
+;~ $CountNox = _readGmail()
+;~ _createNox($CountNox)
+;~ _OpenNox()
+;~ Sleep(10000)
+;~ Local $simulatorList = WinList("NoxPlayer")
+;~  switchInstall()
+;~ _closeNox()
+Automation()
 #EndRegion
 
 

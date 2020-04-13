@@ -476,7 +476,23 @@ Local $simulatorList = WinList("NoxPlayer")
 ;~ 			MouseClick('left', 785, 860)
 ;~ 		EndIf
 ;~ 	WEnd
-EndFunc
+	EndFunc
+	Func _readGmail()
+	$temp = 0
+	$oExcel = _ExcelBookOpen(@ScriptDir & '\gmail.xls',0)
+	Sleep(1000)
+	For $i = 1 to 100
+		$email = _ExcelReadCell($oExcel, 'A' & $i)
+		if $email <> '' Then
+			$temp += 1
+		Else
+			ExitLoop
+		EndIf
+	Next
+	_ExcelBookClose($oExcel)
+	Return $temp
+	EndFunc
+
 
 #EndRegion
 
@@ -587,11 +603,12 @@ EndFunc
 
 	Func Automation()
 	  _closeNoxTimesOne()
-	  _createNox(2)
+	  $CountNox = _readGmail()
+	  _createNox($CountNox)
 	  _OpenNox()
 	  Sleep(10000)
 	  $simulatorList = WinList("NoxPlayer")
-	  Sleep(3000)
+	  Sleep(10000)
 	  switchInstall()
 	  switchPlayLevel1()
 	  switchFindDataOrCreateID()
