@@ -1,3 +1,6 @@
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_UseUpx=y
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <Array.au3>
 #include "HandleImgSearch.au3"
 #include <ExcelCOM_UDF.au3>
@@ -21,17 +24,29 @@ Func TogglePause()
 		ToolTip('Script is "Paused"', 0, 0)
 	WEnd
 	ToolTip("")
- EndFunc   ;==>TogglePause
+EndFunc   ;==>TogglePause
+HotKeySet("{F2}", "_openGame")
+Func _openGame()
+	_closeNox()
+	Sleep(10000)
+	Automation()
+EndFunc
+
 
 Local $posLevel1[6][2] = [[985, 620], [985, 620], [985, 620], [985, 620], [820, 395], [985, 620]]
 Local $posLevel2[3][2] = [[990, 565], [990, 620], [990, 620]]
 Local $posLevel3[4][2] = [[800, 615], [800, 615], [970, 620], [970, 560]]
 Local $posLevel4[2][2] = [[800, 615], [1024, 360]]
 Local $posLevel4_10Move[1][2] = [[985, 445]]
+
+Local $posLevel1New[3][2] = [[800, 570], [990,565], [990,620]]
+Local $posLevel2New[3][2] = [[800, 570], [990,620], [990,565]]
+Local $posLevel3New[3][2] = [[800, 570], [990,565], [990,620]]
+
 Local $unlimitedTime = 4000000
 
-Local $hasData = False
 Local $hasUnlimited = False
+Local $isNewVersion = False
 
 ;800,615 ->Btn Play
 ;800,900 ->Tut Play lv2
@@ -84,7 +99,7 @@ Local $simulatorList = WinList("NoxPlayer")
 	Func _clickImageInTime($image, $toren, $time)
 		For $i = 0 To $time
 			_clickImage($image, $toren)
-			Sleep(1000)
+			Sleep(3000)
 		Next
 	EndFunc   ;==>_clickImageInTime
 
@@ -202,6 +217,19 @@ Local $simulatorList = WinList("NoxPlayer")
 			Sleep(1000)
 			Send("{ENTER}")
 		EndIf
+		;keep phone
+		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\keep.bmp", 0, 0, -1, -1, 90, 1000)
+		If $Result[0][0] <> 0 Then
+			Sleep(1000)
+			MouseClick('left', @DesktopWidth / 2, @DesktopHeight / 2)
+			Sleep(1000)
+			MouseWheel('down', 70)
+			Sleep(1000)
+			Send("{TAB}")
+			Sleep(1000)
+			Send("{ENTER}")
+		EndIf
+
 
 		;wellcome
 		Sleep(5000)
@@ -248,37 +276,26 @@ Local $simulatorList = WinList("NoxPlayer")
 		Sleep(15000)
 		MouseMove(@DesktopWidth / 2, 250)
 
-		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon.bmp", 0, 0, -1, -1, 90, 1000)
-		If Not @error Then
-			MouseMove($Result[1][0], $Result[1][1])
-			Sleep(300)
-			MouseClick('left', $Result[1][0], $Result[1][1])
-		Else
-		  MouseWheel('down', 80)
-		  Sleep(2000)
-		  ;into game
-		  $temp = True
-		  While $temp = True
-			 $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\intogame.bmp", 0, 0, -1, -1, 90, 1000)
-			 If $Result[0][0] == 0 Then
-				Sleep(3000)
-				MouseWheel('down', 60)
-
-			 Else
-				MouseMove($Result[1][0], $Result[1][1])
-				Sleep(300)
-				MouseClick('left', $Result[1][0], $Result[1][1])
-				Sleep(1000)
-				$temp = False
-			 EndIf
-		  WEnd
-		EndIf
-
-
+		Local $arrImg[] = ['gameIcon', 'test','gameIcon1','intogame']
+		for $k = 1 to 3
+			for $i = 0 to UBound($arrImg) - 1
+				$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\" & $arrImg[$i] & ".bmp", 0, 0, -1, -1, 120, 1000)
+				If Not @error Then
+					MouseMove($Result[1][0], $Result[1][1])
+					Sleep(300)
+					MouseClick('left', $Result[1][0], $Result[1][1])
+					Sleep(2222)
+					ExitLoop(2)
+				Else
+					ConsoleWrite("_HandleImgSearch " & $arrImg[$i] &": Fail" & @CRLF)
+				EndIf
+				Sleep(2222)
+			Next
+			MouseWheel('down', 60)
+			Sleep(2000)
+		Next
 
 		Sleep(10000)
-
-
 		;install game
 		_clickImage('install3', 90)
 		Sleep(5000)
@@ -292,6 +309,7 @@ Local $simulatorList = WinList("NoxPlayer")
 		_clickImageWhile('open', 90)
 
 	EndFunc   ;==>_installGame
+
 	Func _creatIdGame()
 		;create Id game
 		_clickImage('createId', 120)
@@ -327,10 +345,10 @@ Local $simulatorList = WinList("NoxPlayer")
 
 	EndFunc   ;==>_creatIdGame
 	Func _createNox($times)
-	   ShellExecute( @ScriptDir & "\Images\white.bmp")
-	   Sleep(1000)
-	   Send("{ENTER}")
-	   Sleep(2000)
+;~ 	   ShellExecute( @ScriptDir & "\Images\white.bmp")
+;~ 	   Sleep(1000)
+;~ 	   Send("{ENTER}")
+;~ 	   Sleep(2000)
 	   Run('C:\Program Files (x86)\Nox\bin\MultiPlayerManager.exe')
 	   WinWait('Nox multi-instance manager','',10)
 	   Sleep(5000)
@@ -368,7 +386,7 @@ Local $simulatorList = WinList("NoxPlayer")
 		If Not @error Then
 			For $i = 1 To $Result[0][0]
 				MouseClick('left', $Result[$i][0], $Result[$i][1])
-				Sleep(15000)
+				Sleep(20000)
 				WinActivate('Nox multi-instance manager')
 				Sleep(2000)
 			Next
@@ -449,14 +467,30 @@ Local $simulatorList = WinList("NoxPlayer")
 ;~ 			MouseClick('left', 785, 860)
 ;~ 		EndIf
 ;~ 	WEnd
-EndFunc
+	EndFunc
+	Func _readGmail()
+	$temp = 0
+	$oExcel = _ExcelBookOpen(@ScriptDir & '\gmail.xls',0)
+	Sleep(1000)
+	For $i = 1 to 100
+		$email = _ExcelReadCell($oExcel, 'A' & $i)
+		if $email <> '' Then
+			$temp += 1
+		Else
+			ExitLoop
+		EndIf
+	Next
+	_ExcelBookClose($oExcel)
+	Return $temp
+	EndFunc
+
 
 #EndRegion
 
 #Region run function
 	Func switchInstall()
 
-		$oExcel = _ExcelBookOpen(@ScriptDir & '\gmail.xlsx')
+		$oExcel = _ExcelBookOpen(@ScriptDir & '\gmail.xls')
 		Sleep(1000)
 		For $i = 1 To UBound($simulatorList) - 1
 			WinActivate($simulatorList[$i][1]) ; Activate a window
@@ -464,9 +498,9 @@ EndFunc
 			$email = _ExcelReadCell($oExcel, 'A' & $i)
 	;~ 		MsgBox(0,0,$email)
 			Sleep(500)
-			$pass = _ExcelReadCell($oExcel, 'C' & $i)
+			$pass = _ExcelReadCell($oExcel, 'B' & $i)
 			Sleep(500)
-			$mail = _ExcelReadCell($oExcel, 'B' & $i)
+			$mail = _ExcelReadCell($oExcel, 'C' & $i)
 	;~ 		MsgBox(0,0,$pass)
 			_installGame($email, $pass,$mail)
 			Sleep(2000) ; Wait 2 seconds
@@ -478,98 +512,82 @@ EndFunc
 	;~ 	_ExcelBookClose($oExcel)
 	EndFunc   ;==>switchInstall
 
-	Func switchPlayLevel1()
+	Func switchPlayLevel()
 	  For $i = 1 To UBound($simulatorList) - 1
 		 WinActivate($simulatorList[$i][1]) ; Activate a window
-		 PlayLevel1First()
-		 Sleep(2000) ; Wait 2 seconds
-	  Next
-	EndFunc   ;==>switchClickStart
+		 Sleep(15000)
+		 $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\start.bmp", 0, 0, -1, -1, 90, 1000)
+		 If $Result[0][0] <> 0 Then
+			MouseMove($Result[1][0], $Result[1][1])
+			Sleep(500)
+			MouseClick('left', $Result[1][0], $Result[1][1])
+			$isNewVersion = True;
+			;Play new version
+			PlayTutorialNew()
+		 Else
+			$isNewVersion = False;
+			;Play old version
+			PlayTutorialOld()
 
-	Func switchFindDataOrCreateID()
-		For $i = 1 To UBound($simulatorList) - 1
-			WinActivate($simulatorList[$i][1]) ; Activate a window
 			Sleep(20000)
 			$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\btnCont.bmp", 0, 0, -1, -1, 90, 1000)
 			If $Result[0][0] <> 0 Then
-			   $hasData = True
 			   MouseMove($Result[1][0], $Result[1][1])
 			   Sleep(500)
 			   MouseClick('left', $Result[1][0], $Result[1][1])
 			Else
-			   $hasData = False
+			   _creatIdGame()
 			   ConsoleWrite("_HandleImgSearch Continue Fail" & @CRLF)
 			EndIf
-			If $hasData == False Then
-				_creatIdGame()
+			Sleep(5000) ; Wait 5 seconds
+		 EndIf
+
+		 Sleep(5000) ; Wait 5 seconds
+
+		 ;Get rewards
+		 GetRewards()
+		 Sleep(5000)
+		 _clickImageInTime("btnClose", 90, 2)
+		 Sleep(5000)
+
+		 ;Play Loop Level
+		 For $a = 1 To 5
+			If $isNewVersion == True Then
+			   PlayLoopLevelNewVersion()
+			Else
+			   playLevel1234()
 			EndIf
 			Sleep(2000) ; Wait 2 seconds
-		Next
-	EndFunc   ;
+		 Next
 
-	Func switchLoopLevel()
-		For $a = 1 To 4
-			For $i = 1 To UBound($simulatorList) - 1
-				WinActivate($simulatorList[$i][1]) ; Activate a window
-				playLevel1234()
-				Sleep(2000) ; Wait 2 seconds
-			Next
-		Next
-	EndFunc
-
-   Func switchLoop60min()
-	  For $i = 1 To UBound($simulatorList) - 1
+		 ;Play Loop 60min
 		 CheckUnlimited()
 		 If $hasUnlimited == True Then
 			$begin = TimerInit()
 			While 1
 			   $dif = TimerDiff($begin)
 			   If $dif > $unlimitedTime Then ExitLoop
-
-			   WinActivate($simulatorList[$i][1]) ; Activate a window
-			   playLevel1()
-			   playLevel2()
-			   playLevel3()
-			   playLevel4()
+			   If $isNewVersion == True Then
+				  PlayLoopLevelNewVersion()
+			   Else
+				  playLevel1234()
+			   EndIf
 			   Sleep(2000) ; Wait 2 seconds
 			WEnd
 		 EndIf
 	  Next
-   ;~
-   EndFunc   ;==>switchLoop60min
-
-   Func switchLoopLevel2to4()
-	For $a = 1 To 5
-		For $i = 1 To UBound($simulatorList) - 1
-			WinActivate($simulatorList[$i][1]) ; Activate a window
-			If $hasData == True Then
-			   playLevel1()
-			   playLevel2()
-			   playLevel3()
-			   playLevel4()
-			ElseIf
-			   playLevel2()
-			   playLevel3()
-			   playLevel4()
-			   playLevel1()
-			EndIf
-			Sleep(2000) ; Wait 2 seconds
-		Next
-	Next
-   EndFunc   ;==>switchLoopLevel2to4
+	EndFunc   ;==>switchClickStart
 
 	Func Automation()
 	  _closeNoxTimesOne()
-	  _createNox(2)
+	  $CountNox = _readGmail()
+	  _createNox($CountNox)
 	  _OpenNox()
 	  Sleep(10000)
 	  $simulatorList = WinList("NoxPlayer")
-	  Sleep(3000)
+	  Sleep(10000)
 	  switchInstall()
-	  switchPlayLevel1()
-	  switchFindDataOrCreateID()
-	  switchLoopLevel2to4()
-	  switchLoop60min()
+	  switchPlayLevel()
 	  _closeNox()
 	EndFunc   ;==>Automation
 
@@ -581,7 +599,9 @@ EndFunc
 ;~ _OpenNox()
 ;~  switchInstall()
 ;~ _closeNox()
-Automation()
+While 1
+	Automation()
+WEnd
 #EndRegion
 
 ;open game from nox
@@ -595,8 +615,8 @@ Automation()
 ;~ 	ConsoleWrite("_HandleImgSearch: Fail" & @CRLF)
 ;~ EndIf
 
-#Region Play Level
-Func PlayLevel1First()
+#Region Play Level Old Version
+Func PlayTutorialOld()
 	Sleep(10000)
 	For $i = 0 To UBound($posLevel1) - 1
 		MouseClickPoint($posLevel1[$i][0], $posLevel1[$i][1])
@@ -605,15 +625,6 @@ Func PlayLevel1First()
 ;~ search button NEXT
 	_clickImageWhile("btnNext", 90)
 EndFunc   ;==>PlayLevel1First
-
-Func LoopLevel2to4()
-	For $i = 0 To 4
-		playLevel2()
-		playLevel3()
-		playLevel4()
-		playLevel1()
-	Next
-EndFunc   ;==>LoopLevel2to4
 
 Func playLevel1()
 	_findPanelLuckyDay()
@@ -633,8 +644,8 @@ Func playLevel2()
 	_findPanelLuckyDay()
 	Sleep(1000)
 	_clickImageWhile("btnPlay", 90)
-	Sleep(2000)
-	_clickImageWhile("btnPlayTut", 90)
+	Sleep(4000)
+	Send("{ESC}")
 	Sleep(2000)
 	For $i = 0 To UBound($posLevel2) - 1
 		MouseClickPoint($posLevel2[$i][0], $posLevel2[$i][1])
@@ -668,7 +679,8 @@ Func playLevel4()
 	Sleep(1000)
 EndFunc   ;==>playLevel4
 
-Func playLevel234()
+Func playLevel1234()
+    playLevel1()
 	playLevel2()
 	playLevel3()
 	playLevel4()
@@ -700,16 +712,85 @@ Func CheckUnlimited()
 
 #EndRegion
 
- Func _findImageBtn($image, $toren, $time)
-	Sleep($time) ;Sleep 10s
-	$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\" & $image & ".bmp", 0, 0, -1, -1, $toren, 1000)
-	If Not @error Then
-		$hasData = True
-		MouseMove($Result[1][0], $Result[1][1])
-		Sleep(300)
-		MouseClick('left', $Result[1][0], $Result[1][1])
-	Else
-		$hasData = False
-		;ConsoleWrite("_HandleImgSearch: Fail" & @CRLF)
-	EndIf
-EndFunc   ;==>_findImageBtn
+#Region Play Level New Version
+Func PlayTutorialNew()
+;~ ;level 1
+Sleep(15000)
+For $i = 0 To UBound($posLevel1New) - 1
+   MouseClickPoint($posLevel1New[$i][0], $posLevel1New[$i][1])
+Next
+Sleep(5000)
+_clickImageWhile("btnNext", 120)
+
+;level 2
+Sleep(15000)
+For $i = 0 To UBound($posLevel2New) - 1
+   MouseClickPoint($posLevel2New[$i][0], $posLevel2New[$i][1])
+Next
+Sleep(5000)
+_clickImageWhile("btnNext", 120)
+
+;level 3
+Sleep(5000)
+For $i = 0 To UBound($posLevel3New) - 1
+   MouseClickPoint($posLevel3New[$i][0], $posLevel3New[$i][1])
+   Sleep(2000)
+Next
+Sleep(5000)
+_clickImageWhile("btnNext", 120)
+
+Sleep(5000)
+;GetRewards
+GetRewards()
+EndFunc
+
+Func PlayLoopLevelNewVersion()
+;Level 1
+_findPanelLuckyDay()
+_clickImageWhile("btnLv1", 90)
+Sleep(3000)
+_clickImageWhile("btnPlay", 90)
+Sleep(10000)
+For $i = 0 To UBound($posLevel1New) - 1
+MouseClickPoint($posLevel1New[$i][0], $posLevel1New[$i][1])
+Next
+Sleep(5000)
+;~ search button NEXT
+_clickImageWhile("btnNext", 90)
+
+;Level 2
+_findPanelLuckyDay()
+Sleep(1000)
+_clickImageWhile("btnPlay", 90)
+Sleep(5000)
+For $i = 0 To UBound($posLevel2New) - 1
+MouseClickPoint($posLevel2New[$i][0], $posLevel2New[$i][1])
+Next
+Sleep(5000)
+_clickImageWhile("btnNext", 90)
+
+;Level 3
+Sleep(3000)
+_clickImageWhile("btnPlay", 90)
+Sleep(5000)
+For $i = 0 To UBound($posLevel3New) - 1
+MouseClickPoint($posLevel3New[$i][0], $posLevel3New[$i][1])
+Sleep(2000)
+Next
+Sleep(5000)
+_clickImageWhile("btnNext", 90)
+
+;Level 4
+_findPanelLuckyDay()
+Sleep(1000)
+_clickImageWhile("btnPlay", 90)
+Sleep(5000)
+For $i = 0 To 10
+Sleep(1500)
+MouseClick("left", $posLevel4_10Move[0][0], $posLevel4_10Move[0][1])
+Next
+Sleep(5000)
+_clickImageWhile("btnClose", 90)
+Sleep(5000)
+EndFunc
+#EndRegion
