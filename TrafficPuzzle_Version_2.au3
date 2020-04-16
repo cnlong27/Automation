@@ -1,3 +1,6 @@
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_UseUpx=y
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <Array.au3>
 #include "HandleImgSearch.au3"
 #include <ExcelCOM_UDF.au3>
@@ -12,7 +15,12 @@ Func TogglePause()
 	WEnd
 	ToolTip("")
 EndFunc   ;==>TogglePause
-
+HotKeySet("{F2}", "_openGame")
+Func _openGame()
+	_closeNox()
+	Sleep(10000)
+	Automation()
+EndFunc
 
 
 $Handle = ""
@@ -101,7 +109,7 @@ Local $simulatorList = WinList("NoxPlayer")
 		Send('traffic puzzle')
 		Sleep(2000)
 		Send("{ENTER}")
-		Sleep(15000)
+		Sleep(10000)
 
 		;select game
 	   $time = 1
@@ -194,6 +202,19 @@ Local $simulatorList = WinList("NoxPlayer")
 			Sleep(1000)
 			Send("{ENTER}")
 		EndIf
+		;keep phone
+		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\keep.bmp", 0, 0, -1, -1, 90, 1000)
+		If $Result[0][0] <> 0 Then
+			Sleep(1000)
+			MouseClick('left', @DesktopWidth / 2, @DesktopHeight / 2)
+			Sleep(1000)
+			MouseWheel('down', 70)
+			Sleep(1000)
+			Send("{TAB}")
+			Sleep(1000)
+			Send("{ENTER}")
+		EndIf
+
 
 		;wellcome
 		Sleep(5000)
@@ -237,40 +258,41 @@ Local $simulatorList = WinList("NoxPlayer")
 		Send('traffic puzzle')
 		Sleep(1500)
 		Send("{ENTER}")
-		Sleep(5000)
+		Sleep(15000)
 		MouseMove(@DesktopWidth / 2, 250)
 
-		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon.bmp", 0, 0, -1, -1, 90, 1000)
+
+		$Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon.bmp", 0, 0, -1, -1, 150, 1000)
 		If Not @error Then
 			MouseMove($Result[1][0], $Result[1][1])
 			Sleep(300)
 			MouseClick('left', $Result[1][0], $Result[1][1])
 		Else
-		  MouseWheel('down', 80)
-		  Sleep(2000)
-		  ;into game
-		  $temp = True
-		  While $temp = True
-			 $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\intogame.bmp", 0, 0, -1, -1, 90, 1000)
-			 If $Result[0][0] == 0 Then
-				Sleep(3000)
-				MouseWheel('down', 60)
-
-			 Else
-				MouseMove($Result[1][0], $Result[1][1])
+		  $Result2 = _HandleImgSearch($Handle, @ScriptDir & "\Images\test.bmp", 0, 0, -1, -1, 120, 1000)
+		  If Not @error Then
+			MouseMove($Result2[1][0], $Result2[1][1])
+			Sleep(300)
+			MouseClick('left', $Result2[1][0], $Result2[1][1])
+		  Else
+			$Result3 = _HandleImgSearch($Handle, @ScriptDir & "\Images\gameIcon1.bmp", 0, 0, -1, -1, 150, 1000)
+			If Not @error Then
+				MouseMove($Result3[1][0], $Result3[1][1])
 				Sleep(300)
-				MouseClick('left', $Result[1][0], $Result[1][1])
-				Sleep(1000)
-				$temp = False
-			 EndIf
-		  WEnd
+				MouseClick('left', $Result3[1][0], $Result3[1][1])
+			Else
+				MouseWheel('down', 80)
+				Sleep(2000)
+				$Result4 = _HandleImgSearch($Handle, @ScriptDir & "\Images\intogame.bmp", 0, 0, -1, -1, 120, 1000)
+				If $Result4[0][0] <> 0 Then
+					MouseMove($Result4[1][0], $Result4[1][1])
+					Sleep(300)
+					MouseClick('left', $Result4[1][0], $Result4[1][1])
+					Sleep(1000)
+				EndIf
+			EndIf
+		  EndIf
 		EndIf
-
-
-
 		Sleep(10000)
-
-
 		;install game
 		_clickImage('install3', 90)
 		Sleep(5000)
@@ -284,6 +306,7 @@ Local $simulatorList = WinList("NoxPlayer")
 		_clickImageWhile('open', 90)
 
 	EndFunc   ;==>_installGame
+
 	Func _creatIdGame()
 		;create Id game
 		_clickImage('createId', 120)
@@ -400,9 +423,12 @@ Local $simulatorList = WinList("NoxPlayer")
    ;~ MsgBox(0,0,0)
    EndFunc   ;==>_closeNox
 	Func _closeNoxTimesOne()
+	   Run('C:\Program Files (x86)\Nox\bin\MultiPlayerManager.exe')
+	   WinWait('Nox multi-instance manager','',10)
+	   Sleep(2000)
 	   WinActivate('Nox multi-instance manager')
 	   Sleep(2000)
-	   $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\closeNox.bmp", 0, 0, -1, -1, 120, 1000)
+	   $Result = _HandleImgSearch($Handle, @ScriptDir & "\Images\closeNox.bmp", 0, 0, -1, -1, 90, 1000)
 	   If Not @error Then
 			 For $i = 1 To $Result[0][0]
 				 MouseClick('left', $Result[1][0] + 5, $Result[1][1] + 5)
@@ -415,8 +441,45 @@ Local $simulatorList = WinList("NoxPlayer")
 		 Else
 			 ConsoleWrite("Error Search closeNox.bmp" & @CRLF)
 		 EndIf
+	  EndFunc
+    Func GetRewards()
+	;congratulations
+	$mau = 0
+	For $i = 0 To 2
+	  $mau = PixelGetColor(780, 250)
+	  If $mau == 14632533 Then
+		 MouseClick('left', 775, 685)
+		 Sleep(7000)
+		 MouseClick('left', 785, 860)
+		 ExitLoop
+	  EndIf
+	  Sleep(5000)
+	Next
+;~ 	$mau = 0
+;~ 	While $mau <> 14632533
+;~ 		$mau = PixelGetColor(780, 250)
+;~ 		If $mau == 14632533 Then
+;~ 			MouseClick('left', 775, 685)
+;~ 			Sleep(7000)
+;~ 			MouseClick('left', 785, 860)
+;~ 		EndIf
+;~ 	WEnd
+EndFunc
+	Func _readGmail()
+	$temp = 0
+	$oExcel = _ExcelBookOpen(@ScriptDir & '\gmail.xls',0)
+	Sleep(1000)
+	For $i = 1 to 100
+		$email = _ExcelReadCell($oExcel, 'A' & $i)
+		if $email <> '' Then
+			$temp += 1
+		Else
+			ExitLoop
+		EndIf
+	Next
+	_ExcelBookClose($oExcel)
+	Return $temp
 	EndFunc
-
 #EndRegion
 
 #Region run function
@@ -494,23 +557,32 @@ Local $simulatorList = WinList("NoxPlayer")
 	EndFunc   ;==>switchLoop60min
 
 	Func Automation()
+		_closeNoxTimesOne()
+		$CountNox = _readGmail()
+		_createNox($CountNox)
+		_OpenNox()
+		Sleep(10000)
+		$simulatorList = WinList("NoxPlayer")
+		Sleep(10000)
 		switchInstall()
 		switchClickStart()
-	;	switchFindDataOrCreateID()
 		switchLoopLevel()
 		switchLoop60min()
+		_closeNox()
 	EndFunc   ;==>Automation
 
 #EndRegion
 
 #Region open and run Game
 ;~ _closeNoxTimesOne()
-_createNox(2)
-_OpenNox()
-Sleep(10000)
-Local $simulatorList = WinList("NoxPlayer")
- switchInstall()
-_closeNox()
+;~ $CountNox = _readGmail()
+;~ _createNox($CountNox)
+;~ _OpenNox()
+;~ Sleep(10000)
+;~ Local $simulatorList = WinList("NoxPlayer")
+;~  switchInstall()
+;~ _closeNox()
+Automation()
 #EndRegion
 
 
@@ -527,30 +599,6 @@ _closeNox()
 ;~ Else
 ;~ 	ConsoleWrite("_HandleImgSearch: Fail" & @CRLF)
 ;~ EndIf
-
-Func GetRewards()
-	;congratulations
-	$mau = 0
-	For $i = 0 To 2
-	  $mau = PixelGetColor(780, 250)
-	  If $mau == 14632533 Then
-		 MouseClick('left', 775, 685)
-		 Sleep(7000)
-		 MouseClick('left', 785, 860)
-		 ExitLoop
-	  EndIf
-	  Sleep(5000)
-	Next
-
-;	While $mau <> 14632533
-;		$mau = PixelGetColor(780, 250)
-;		If $mau == 14632533 Then
-;			MouseClick('left', 775, 685)
-;			Sleep(7000)
-;			MouseClick('left', 785, 860)
-;		EndIf
-;	WEnd
-EndFunc
 
 Func playLevel1()
 	_findPanelLuckyDay()
